@@ -501,7 +501,9 @@
 	 */
 	function scancode (e) {
 		var locale = Mstsc.locale();
+
 		locale = (['fr', 'en'].indexOf(locale) > 0 && locale) || 'en';
+		console.log(KeyMap[e.code || UnicodeToCode[Mstsc.browser() || 'firefox'][locale][e.keyCode]]);
 		return KeyMap[e.code || UnicodeToCode[Mstsc.browser() || 'firefox'][locale][e.keyCode]];
 	}
 	

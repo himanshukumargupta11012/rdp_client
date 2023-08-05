@@ -110,15 +110,18 @@
 			});
 			
 			// bind keyboard event
+	
 			window.addEventListener('keydown', function (e) {
 				if (!self.socket || !self.activeSession) return;
-				
+				// console.log(new Date().getMilliseconds())
 				self.socket.emit('scancode', Mstsc.scancode(e), true);
 
 				e.preventDefault();
-				return false;
+				return false
 			});
 			window.addEventListener('keyup', function (e) {
+				console.log("keydown")
+				// console.log(new Date())
 				if (!self.socket || !self.activeSession) return;
 				
 				self.socket.emit('scancode', Mstsc.scancode(e), false);

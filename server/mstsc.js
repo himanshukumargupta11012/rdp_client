@@ -17,7 +17,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-var rdp = require('node-rdpjs');
+// var rdp = require('node-rdpjs');
+var rdp = require("./../rdp")
 
 /**
  * Create proxy between rdp layer and socket io
@@ -32,7 +33,7 @@ module.exports = function (server) {
 				// clean older connection
 				rdpClient.close();
 			};
-			
+			console.log(infos)
 			rdpClient = rdp.createClient({ 
 				domain : infos.domain, 
 				userName : infos.username,
@@ -45,7 +46,19 @@ module.exports = function (server) {
 			}).on('connect', function () {
 				client.emit('rdp-connect');
 			}).on('bitmap', function(bitmap) {
+
 				client.emit('rdp-bitmap', bitmap);
+				last_date = new Date();
+				setTimeout(function() {
+					curr_date = new Date();
+					if(curr_date.getTime() - last_date.getTime() > 120000 && rdpClient) {
+						rdpClient.close();
+						rdpClient = null;
+						client.emit('rdp-close');
+						console.log("yes2");
+					}
+				}, 120000);
+				
 			}).on('close', function() {
 				client.emit('rdp-close');
 			}).on('error', function(err) {
@@ -61,6 +74,7 @@ module.exports = function (server) {
 			}
 			rdpClient.sendWheelEvent(x, y, step, isNegative, isHorizontal);
 		}).on('scancode', function (code, isPressed) {
+			// console.log(new Date().getMilliseconds());
 			if (!rdpClient) return;
 
 			rdpClient.sendKeyEventScancode(code, isPressed);
